@@ -1,0 +1,204 @@
+instruction("MAIN", 1, "MOVE TEMP 36 HALLOCATE 16").
+instruction("MAIN", 2, "MOVE TEMP 37 HALLOCATE 12").
+instruction("MAIN", 3, "MOVE TEMP 87 LS_Init").
+instruction("MAIN", 4, "HSTORE TEMP 36 12 TEMP 87").
+instruction("MAIN", 5, "MOVE TEMP 88 LS_Search").
+instruction("MAIN", 6, "HSTORE TEMP 36 8 TEMP 88").
+instruction("MAIN", 7, "MOVE TEMP 89 LS_Print").
+instruction("MAIN", 8, "HSTORE TEMP 36 4 TEMP 89").
+instruction("MAIN", 9, "MOVE TEMP 90 LS_Start").
+instruction("MAIN", 10, "HSTORE TEMP 36 0 TEMP 90").
+instruction("MAIN", 11, "MOVE TEMP 38 4").
+instruction("MAIN", 12, "L0	NOOP").
+instruction("MAIN", 13, "MOVE TEMP 91 12").
+instruction("MAIN", 14, "MOVE TEMP 92 LT TEMP 38 TEMP 91").
+instruction("MAIN", 15, "CJUMP TEMP 92 L1").
+instruction("MAIN", 16, "MOVE TEMP 93 PLUS TEMP 37 TEMP 38").
+instruction("MAIN", 17, "MOVE TEMP 94 0").
+instruction("MAIN", 18, "HSTORE TEMP 93 0 TEMP 94").
+instruction("MAIN", 19, "MOVE TEMP 38 PLUS TEMP 38 4").
+instruction("MAIN", 20, "JUMP L0").
+instruction("MAIN", 21, "L1	NOOP").
+instruction("MAIN", 22, "HSTORE TEMP 37 0 TEMP 36").
+instruction("MAIN", 23, "MOVE TEMP 35 TEMP 37").
+instruction("MAIN", 24, "HLOAD TEMP 33 TEMP 35 0").
+instruction("MAIN", 25, "HLOAD TEMP 34 TEMP 33 0").
+instruction("MAIN", 26, "MOVE TEMP 95 10").
+instruction("MAIN", 27, "MOVE TEMP 96 CALL TEMP 34 ( TEMP 35 TEMP 95 )").
+instruction("MAIN", 28, "PRINT TEMP 96").
+instruction("LS_Start", 1, "MOVE TEMP 41 TEMP 0").
+instruction("LS_Start", 2, "HLOAD TEMP 39 TEMP 41 0").
+instruction("LS_Start", 3, "HLOAD TEMP 40 TEMP 39 12").
+instruction("LS_Start", 4, "MOVE TEMP 97 CALL TEMP 40 ( TEMP 41 TEMP 1 )").
+instruction("LS_Start", 5, "MOVE TEMP 20 TEMP 97").
+instruction("LS_Start", 6, "MOVE TEMP 44 TEMP 0").
+instruction("LS_Start", 7, "HLOAD TEMP 42 TEMP 44 0").
+instruction("LS_Start", 8, "HLOAD TEMP 43 TEMP 42 4").
+instruction("LS_Start", 9, "MOVE TEMP 98 CALL TEMP 43 ( TEMP 44 )").
+instruction("LS_Start", 10, "MOVE TEMP 21 TEMP 98").
+instruction("LS_Start", 11, "MOVE TEMP 99 9999").
+instruction("LS_Start", 12, "PRINT TEMP 99").
+instruction("LS_Start", 13, "MOVE TEMP 47 TEMP 0").
+instruction("LS_Start", 14, "HLOAD TEMP 45 TEMP 47 0").
+instruction("LS_Start", 15, "HLOAD TEMP 46 TEMP 45 8").
+instruction("LS_Start", 16, "MOVE TEMP 100 8").
+instruction("LS_Start", 17, "MOVE TEMP 101 CALL TEMP 46 ( TEMP 47 TEMP 100 )").
+instruction("LS_Start", 18, "PRINT TEMP 101").
+instruction("LS_Start", 19, "MOVE TEMP 50 TEMP 0").
+instruction("LS_Start", 20, "HLOAD TEMP 48 TEMP 50 0").
+instruction("LS_Start", 21, "HLOAD TEMP 49 TEMP 48 8").
+instruction("LS_Start", 22, "MOVE TEMP 102 12").
+instruction("LS_Start", 23, "MOVE TEMP 103 CALL TEMP 49 ( TEMP 50 TEMP 102 )").
+instruction("LS_Start", 24, "PRINT TEMP 103").
+instruction("LS_Start", 25, "MOVE TEMP 53 TEMP 0").
+instruction("LS_Start", 26, "HLOAD TEMP 51 TEMP 53 0").
+instruction("LS_Start", 27, "HLOAD TEMP 52 TEMP 51 8").
+instruction("LS_Start", 28, "MOVE TEMP 104 17").
+instruction("LS_Start", 29, "MOVE TEMP 105 CALL TEMP 52 ( TEMP 53 TEMP 104 )").
+instruction("LS_Start", 30, "PRINT TEMP 105").
+instruction("LS_Start", 31, "MOVE TEMP 56 TEMP 0").
+instruction("LS_Start", 32, "HLOAD TEMP 54 TEMP 56 0").
+instruction("LS_Start", 33, "HLOAD TEMP 55 TEMP 54 8").
+instruction("LS_Start", 34, "MOVE TEMP 106 50").
+instruction("LS_Start", 35, "MOVE TEMP 107 CALL TEMP 55 ( TEMP 56 TEMP 106 )").
+instruction("LS_Start", 36, "PRINT TEMP 107").
+instruction("LS_Start", 37, "MOVE TEMP 108 55").
+instruction("LS_Start", 38, "RETURN TEMP 108").
+instruction("LS_Print", 1, "MOVE TEMP 22 1").
+instruction("LS_Print", 2, "L2	NOOP").
+instruction("LS_Print", 3, "HLOAD TEMP 58 TEMP 0 8").
+instruction("LS_Print", 4, "MOVE TEMP 109 LT TEMP 22 TEMP 58").
+instruction("LS_Print", 5, "CJUMP TEMP 109 L3").
+instruction("LS_Print", 6, "HLOAD TEMP 63 TEMP 0 4").
+instruction("LS_Print", 7, "MOVE TEMP 60 TIMES TEMP 22 4").
+instruction("LS_Print", 8, "HLOAD TEMP 63 TEMP 0 4").
+instruction("LS_Print", 9, "HLOAD TEMP 61 TEMP 63 0").
+instruction("LS_Print", 10, "MOVE TEMP 110 1").
+instruction("LS_Print", 11, "MOVE TEMP 111 LT TEMP 60 TEMP 61").
+instruction("LS_Print", 12, "MOVE TEMP 112 MINUS TEMP 110 TEMP 111").
+instruction("LS_Print", 13, "CJUMP TEMP 112 L4").
+instruction("LS_Print", 14, "ERROR").
+instruction("LS_Print", 15, "L4	NOOP").
+instruction("LS_Print", 16, "MOVE TEMP 113 4").
+instruction("LS_Print", 17, "MOVE TEMP 114 TEMP 113").
+instruction("LS_Print", 18, "MOVE TEMP 115 PLUS TEMP 60 TEMP 114").
+instruction("LS_Print", 19, "MOVE TEMP 116 TEMP 115").
+instruction("LS_Print", 20, "MOVE TEMP 117 PLUS TEMP 63 TEMP 116").
+instruction("LS_Print", 21, "HLOAD TEMP 62 TEMP 117 0").
+instruction("LS_Print", 22, "PRINT TEMP 62").
+instruction("LS_Print", 23, "MOVE TEMP 22 PLUS TEMP 22 1").
+instruction("LS_Print", 24, "JUMP L2").
+instruction("LS_Print", 25, "L3	NOOP").
+instruction("LS_Print", 26, "MOVE TEMP 118 0").
+instruction("LS_Print", 27, "RETURN TEMP 118").
+instruction("LS_Search", 1, "MOVE TEMP 23 1").
+instruction("LS_Search", 2, "MOVE TEMP 24 0").
+instruction("LS_Search", 3, "MOVE TEMP 25 0").
+instruction("LS_Search", 4, "L5	NOOP").
+instruction("LS_Search", 5, "HLOAD TEMP 66 TEMP 0 8").
+instruction("LS_Search", 6, "MOVE TEMP 119 LT TEMP 23 TEMP 66").
+instruction("LS_Search", 7, "CJUMP TEMP 119 L6").
+instruction("LS_Search", 8, "HLOAD TEMP 71 TEMP 0 4").
+instruction("LS_Search", 9, "MOVE TEMP 68 TIMES TEMP 23 4").
+instruction("LS_Search", 10, "HLOAD TEMP 71 TEMP 0 4").
+instruction("LS_Search", 11, "HLOAD TEMP 69 TEMP 71 0").
+instruction("LS_Search", 12, "MOVE TEMP 120 1").
+instruction("LS_Search", 13, "MOVE TEMP 121 LT TEMP 68 TEMP 69").
+instruction("LS_Search", 14, "MOVE TEMP 122 MINUS TEMP 120 TEMP 121").
+instruction("LS_Search", 15, "CJUMP TEMP 122 L7").
+instruction("LS_Search", 16, "ERROR").
+instruction("LS_Search", 17, "L7	NOOP").
+instruction("LS_Search", 18, "MOVE TEMP 123 4").
+instruction("LS_Search", 19, "MOVE TEMP 124 TEMP 123").
+instruction("LS_Search", 20, "MOVE TEMP 125 PLUS TEMP 68 TEMP 124").
+instruction("LS_Search", 21, "MOVE TEMP 126 TEMP 125").
+instruction("LS_Search", 22, "MOVE TEMP 127 PLUS TEMP 71 TEMP 126").
+instruction("LS_Search", 23, "HLOAD TEMP 70 TEMP 127 0").
+instruction("LS_Search", 24, "MOVE TEMP 26 TEMP 70").
+instruction("LS_Search", 25, "MOVE TEMP 27 PLUS TEMP 1 1").
+instruction("LS_Search", 26, "MOVE TEMP 128 LT TEMP 26 TEMP 1").
+instruction("LS_Search", 27, "CJUMP TEMP 128 L8").
+instruction("LS_Search", 28, "MOVE TEMP 28 0").
+instruction("LS_Search", 29, "JUMP L9").
+instruction("LS_Search", 30, "L8	NOOP").
+instruction("LS_Search", 31, "MOVE TEMP 129 1").
+instruction("LS_Search", 32, "MOVE TEMP 130 LT TEMP 26 TEMP 27").
+instruction("LS_Search", 33, "MOVE TEMP 131 MINUS TEMP 129 TEMP 130").
+instruction("LS_Search", 34, "CJUMP TEMP 131 L10").
+instruction("LS_Search", 35, "MOVE TEMP 28 0").
+instruction("LS_Search", 36, "JUMP L11").
+instruction("LS_Search", 37, "L10	NOOP").
+instruction("LS_Search", 38, "MOVE TEMP 24 1").
+instruction("LS_Search", 39, "MOVE TEMP 25 1").
+instruction("LS_Search", 40, "HLOAD TEMP 73 TEMP 0 8").
+instruction("LS_Search", 41, "MOVE TEMP 23 TEMP 73").
+instruction("LS_Search", 42, "L11	NOOP").
+instruction("LS_Search", 43, "L9	NOOP").
+instruction("LS_Search", 44, "MOVE TEMP 23 PLUS TEMP 23 1").
+instruction("LS_Search", 45, "JUMP L5").
+instruction("LS_Search", 46, "L6	NOOP").
+instruction("LS_Search", 47, "RETURN TEMP 25").
+instruction("LS_Init", 1, "HSTORE TEMP 0 8 TEMP 1").
+instruction("LS_Init", 2, "MOVE TEMP 132 PLUS TEMP 1 1").
+instruction("LS_Init", 3, "MOVE TEMP 133 4").
+instruction("LS_Init", 4, "MOVE TEMP 134 TIMES TEMP 132 TEMP 133").
+instruction("LS_Init", 5, "MOVE TEMP 75 HALLOCATE TEMP 134").
+instruction("LS_Init", 6, "MOVE TEMP 76 4").
+instruction("LS_Init", 7, "L12	NOOP").
+instruction("LS_Init", 8, "MOVE TEMP 135 1").
+instruction("LS_Init", 9, "MOVE TEMP 136 PLUS TEMP 1 TEMP 135").
+instruction("LS_Init", 10, "MOVE TEMP 137 4").
+instruction("LS_Init", 11, "MOVE TEMP 138 TEMP 137").
+instruction("LS_Init", 12, "MOVE TEMP 139 TIMES TEMP 136 TEMP 138").
+instruction("LS_Init", 13, "MOVE TEMP 140 LT TEMP 76 TEMP 139").
+instruction("LS_Init", 14, "CJUMP TEMP 140 L13").
+instruction("LS_Init", 15, "MOVE TEMP 141 PLUS TEMP 75 TEMP 76").
+instruction("LS_Init", 16, "MOVE TEMP 142 0").
+instruction("LS_Init", 17, "HSTORE TEMP 141 0 TEMP 142").
+instruction("LS_Init", 18, "MOVE TEMP 76 PLUS TEMP 76 4").
+instruction("LS_Init", 19, "JUMP L12").
+instruction("LS_Init", 20, "L13	NOOP").
+instruction("LS_Init", 21, "MOVE TEMP 143 4").
+instruction("LS_Init", 22, "MOVE TEMP 144 TIMES TEMP 1 TEMP 143").
+instruction("LS_Init", 23, "HSTORE TEMP 75 0 TEMP 144").
+instruction("LS_Init", 24, "HSTORE TEMP 0 4 TEMP 75").
+instruction("LS_Init", 25, "MOVE TEMP 29 1").
+instruction("LS_Init", 26, "HLOAD TEMP 77 TEMP 0 8").
+instruction("LS_Init", 27, "MOVE TEMP 145 1").
+instruction("LS_Init", 28, "MOVE TEMP 30 PLUS TEMP 77 TEMP 145").
+instruction("LS_Init", 29, "L14	NOOP").
+instruction("LS_Init", 30, "HLOAD TEMP 80 TEMP 0 8").
+instruction("LS_Init", 31, "MOVE TEMP 146 LT TEMP 29 TEMP 80").
+instruction("LS_Init", 32, "CJUMP TEMP 146 L15").
+instruction("LS_Init", 33, "MOVE TEMP 147 2").
+instruction("LS_Init", 34, "MOVE TEMP 31 TIMES TEMP 147 TEMP 29").
+instruction("LS_Init", 35, "MOVE TEMP 32 MINUS TEMP 30 3").
+instruction("LS_Init", 36, "MOVE TEMP 148 1").
+instruction("LS_Init", 37, "MOVE TEMP 86 TIMES TEMP 148 4").
+instruction("LS_Init", 38, "MOVE TEMP 149 PLUS TEMP 0 TEMP 86").
+instruction("LS_Init", 39, "HLOAD TEMP 85 TEMP 149 0").
+instruction("LS_Init", 40, "MOVE TEMP 83 TIMES TEMP 29 4").
+instruction("LS_Init", 41, "MOVE TEMP 150 1").
+instruction("LS_Init", 42, "MOVE TEMP 86 TIMES TEMP 150 4").
+instruction("LS_Init", 43, "MOVE TEMP 151 PLUS TEMP 0 TEMP 86").
+instruction("LS_Init", 44, "HLOAD TEMP 85 TEMP 151 0").
+instruction("LS_Init", 45, "HLOAD TEMP 84 TEMP 85 0").
+instruction("LS_Init", 46, "MOVE TEMP 152 1").
+instruction("LS_Init", 47, "MOVE TEMP 153 LT TEMP 83 TEMP 84").
+instruction("LS_Init", 48, "MOVE TEMP 154 MINUS TEMP 152 TEMP 153").
+instruction("LS_Init", 49, "CJUMP TEMP 154 L16").
+instruction("LS_Init", 50, "ERROR").
+instruction("LS_Init", 51, "L16	NOOP").
+instruction("LS_Init", 52, "MOVE TEMP 155 4").
+instruction("LS_Init", 53, "MOVE TEMP 156 TEMP 155").
+instruction("LS_Init", 54, "MOVE TEMP 157 PLUS TEMP 83 TEMP 156").
+instruction("LS_Init", 55, "MOVE TEMP 158 TEMP 157").
+instruction("LS_Init", 56, "MOVE TEMP 159 PLUS TEMP 85 TEMP 158").
+instruction("LS_Init", 57, "MOVE TEMP 160 PLUS TEMP 31 TEMP 32").
+instruction("LS_Init", 58, "HSTORE TEMP 159 0 TEMP 160").
+instruction("LS_Init", 59, "MOVE TEMP 29 PLUS TEMP 29 1").
+instruction("LS_Init", 60, "MOVE TEMP 30 MINUS TEMP 30 1").
+instruction("LS_Init", 61, "JUMP L14").
+instruction("LS_Init", 62, "L15	NOOP").
+instruction("LS_Init", 63, "MOVE TEMP 161 0").
+instruction("LS_Init", 64, "RETURN TEMP 161").

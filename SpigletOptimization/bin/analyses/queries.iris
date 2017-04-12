@@ -1,0 +1,14 @@
+?- blockLiveRange(?method, ?blockStart, ?blockEnd, ?outTemps).
+
+?- instructionLiveRange(?method, ?instructionCounter, ?outTemps).
+
+?- deadCode(?method, ?instructionCounter, ?instruction).
+
+?- costantPropagation(?method, ?blockStart, ?blockEnd, ?temp, ?constant).
+
+?- copyPropagation(?method, ?blockStart, ?blockEnd, ?temp1, ?temp2).
+
+?- basicBlock(?methodethod, ?start, ?end).
+
+
+

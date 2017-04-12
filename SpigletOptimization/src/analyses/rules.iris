@@ -1,0 +1,276 @@
+cJumpInstruction(?m, ?i) :- next(?m, ?i, ?j), 
+                            next(?m, ?i, ?k), 
+                            ?i+1 = ?k,
+                            ?j != ?k.
+                            
+jumpInstruction(?m, ?i) :- next(?m, ?i, ?j),
+                           ?i+1 = ?k,
+                           ?j != ?k,
+                           !next(?m, ?i, ?k).
+
+
+//Basic Blocks
+//__________________________________________________________________________________________________________________________
+
+blockEnd(?method, ?counter)	:-	next(?method, ?counter, ?nxt),
+								!next(?method, ?nxt, ?x),
+								?method = "MAIN".
+
+blockEnd(?method, ?cp1)	:-	next(?method, ?counter, ?nxt),
+							!next(?method, ?nxt, ?x),
+							?method != "MAIN",
+							?counter + 1 = ?cp1.
+
+blockEnd(?method, ?counter)	:-	instruction(?method, ?counter, ?Inst),
+								REGEX(?Inst, "C?JUMP.*").
+
+blockEnd(?method, ?counter)	:-	instruction(?method, ?c2, ?Inst),
+								?counter+1 = ?c2,
+								REGEX(?Inst, "L[0-9]*.*").
+
+blockStart(?method, ?counter)	:-	instruction(?method, 1, ?Inst),
+									?counter = 1.
+
+blockStart(?method, ?counter)	:-	instruction(?method, ?counter, ?Inst),
+									REGEX(?Inst, "L[0-9]*.*").
+
+blockStart(?method, ?counter)	:-	instruction(?method, ?c2, ?Inst),
+									?counter+-1 = ?c2,
+									REGEX(?Inst, "C?JUMP.*").
+
+block(?method, ?start, ?end) :-	instruction(?method, ?start, ?sIns),
+								?end >= ?start,
+								blockEnd(?method, ?end),
+								blockStart(?method, ?start),
+								!blex1(?method, ?start, ?end).
+
+blexIN(?method, ?s, ?e)	:-	blockStart(?method, ?s),
+							blockEnd(?method, ?e),
+							?s <= ?e.
+
+blex1(?method, ?s, ?e)	:-	blockStart(?method, ?s),
+							blockEnd(?method, ?e),
+							?s <= ?e,
+							blexIN(?method, ?s, ?oe),
+							?e - ?s = ?lines,
+							?oe - ?s = ?minLines,
+							?lines > ?minLines.
+
+
+blex2(?method, ?s, ?e)	:-	blockStart(?method, ?s),
+							blockEnd(?method, ?e),
+							?s <= ?e,
+							block(?method, ?os, ?e),
+							?e - ?s = ?lines,
+							?e - ?os = ?maxLines,
+							?lines < ?maxLines.
+
+basicBlock(?method, ?start, ?end) :-	instruction(?method, ?start, ?sIns),
+										?end >= ?start,
+										blockEnd(?method, ?end),
+										blockStart(?method, ?start),
+										!blex1(?method, ?start, ?end),
+										!blex2(?method, ?start, ?end).
+
+
+//Live Range
+//__________________________________________________________________________________________________________________________
+
+in(?method, ?i, ?inTemps)	:-	out(?method, ?i, ?inTemps),
+								!varDef(?method, ?i, ?inTemps).
+
+in(?method, ?i, ?inTemps)	:-	varUse(?method, ?i, ?inTemps).
+
+out(?method, ?i, ?outTemps)	:-	next(?method, ?i, ?nxt),
+								in(?method, ?nxt, ?outTemps).
+
+succBlocks(?method, ?prevEnd, ?sucStart)	:-	instruction(?method, ?prevEnd, ?inst),
+												next(?method, ?prevEnd, ?sucStart).
+
+showSuccBlocks(?method, ?end, ?sucStart)	:-	basicBlock(?method, ?start, ?end),
+												succBlocks(?method, ?end, ?sucStart).
+
+outB(?method, ?blockStart, ?blockEnd, ?outTemps)	:-	basicBlock(?method, ?blockStart, ?blockEnd),
+														succBlocks(?method, ?blockEnd, ?succ),
+														in(?method, ?succ, ?outTemps).
+
+blockLiveRange(?method, ?blockStart, ?blockEnd, ?outTemps)	:-	
+	outB(?method, ?blockStart, ?blockEnd, ?outTemps).
+
+instructionLiveRange(?method, ?i, ?outTemps)	:-	
+	out(?method, ?i, ?outTemps).
+
+//DeadCode
+//__________________________________________________________________________________________________________________________
+
+deadInstruction(?m, ?i, ?inst)	:-	varDef(?m, ?i, ?temp),
+									instruction(?m, ?i, ?inst),
+									!out(?method, ?i, ?temp).
+
+notDead(?m, ?i, ?inst)	:-	
+	instruction(?m, ?i, ?inst),
+	!deadCode(?m, ?i, ?inst).
+
+deadCode(?m, ?i, ?inst)	:-	
+	deadInstruction(?m, ?i, ?inst).
+
+
+//Costant Propagation (Θεωρώντας ότι η miniJava δεν υποστηρίζει break ή κάποιο άλλο flow control που θα οδηγούσε σε πάνω από δύο predecessors ανά block.)
+//__________________________________________________________________________________________________________________________
+
+findBlock(?method, ?i, ?start, ?end)	:-
+	instruction(?method, ?i, ?inst),
+	basicBlock(?method, ?start, ?end),
+	?start < ?i,
+	?end > ?i.
+
+smORbg(?m, ?i, ?bEnd, ?bStart)	:-
+	basicBlock(?m, ?bStart, ?bEnd),
+	instruction(?m, ?i, ?inst),
+	?i > ?bEnd.
+
+smORbg(?m, ?i, ?bEnd, ?bStart)	:-
+	basicBlock(?m, ?bStart, ?bEnd),
+	instruction(?m, ?i, ?inst),
+	?i < ?bStart.	
+
+genInBC(?m, ?bStart, ?bEnd, ?temp, ?con)	:-	
+	basicBlock(?m, ?bStart, ?bEnd),
+	constMove(?m, ?i, ?temp, ?con),
+	?i <= ?bEnd,
+	?i >= ?bStart,
+	!reAssignedC(?m, ?i, ?bEnd, ?temp).
+
+reAssignedC(?m, ?prevConMove, ?bEnd, ?temp)	:-	
+	basicBlock(?m, ?bStart, ?bEnd),
+	constMove(?m, ?prevConMove, ?temp, ?con),
+	instruction(?m, ?j, ?inst),
+	varDef(?m, ?j, ?temp),
+	?j > ?prevConMove,
+	?j <= ?bEnd.
+
+killedInBC(?m, ?bStart, ?bEnd, ?temp, ?con)	:-
+	basicBlock(?m, ?bStart, ?bEnd),
+	instruction(?m, ?i, ?inst),
+	varDef(?m, ?i, ?temp),
+	constMove(?m, ?j, ?temp, ?con),
+	smORbg(?m, ?j, ?bEnd, ?bStart),
+	?i <= ?bEnd,
+	?i >= ?bStart.
+
+outCsP(?m, ?bStart, ?bEnd, ?temp, ?con)	:-	
+	genInBC(?m, ?bStart, ?bEnd, ?temp, ?con).
+
+outCsP(?m, ?bStart, ?bEnd, ?temp, ?con)	:-	
+	inCsP(?m, ?bStart, ?bEnd, ?temp, ?con),
+	!killedInBC(?m, ?bStart, ?bEnd, ?temp, ?con).
+
+inCsP(?m, ?bStart, ?bEnd, ?temp, ?con)	:-	
+	basicBlock(?m, ?bStart, ?bEnd),
+	next(?m, ?prev1, ?bStart),
+	otherPrec(?m, ?prev1, ?prev2, ?bStart),
+	dInCsP(?m, ?bStart, ?temp, ?con).
+
+inCsP(?m, ?bStart, ?bEnd, ?temp, ?con)	:-	
+	basicBlock(?m, ?bStart, ?bEnd),
+	next(?m, ?prev1, ?bStart),
+	!otherPrec(?m, ?prev1, ?prev2, ?bStart),
+	sInCsP(?m, ?bStart, ?temp, ?con).
+
+otherPrec(?m, ?firstP, ?secP, ?bStart)	:-	
+	instruction(?m, ?firstP, ?inst),
+	?firstP != ?secP,
+	next(?m, ?secP, ?bStart).
+
+dInCsP(?m, ?bStart, ?temp, ?con)	:-	
+	next(?m, ?prev1, ?bStart),
+	instruction(?m, ?prev1, ?inst1),
+	basicBlock(?m, ?prevStart1, ?prev1),
+	outCsP(?m, ?prevStart1, ?prev1, ?temp, ?con),
+	otherPrec(?m, ?prev1, ?prev2, ?bStart),
+	basicBlock(?m, ?prevStart2, ?prev2),
+	outCsP(?m, ?prevStart2, ?prev2, ?temp, ?con).
+
+sInCsP(?m, ?bStart, ?temp, ?con)	:-	
+	next(?m, ?prevEnd, ?bStart),
+	instruction(?m, ?prevEnd, ?inst),
+	basicBlock(?m, ?prevStart, ?prevEnd),
+	outCsP(?m, ?prevStart, ?prevEnd, ?temp, ?con).
+
+
+costantPropagation(?m, ?bStart, ?bEnd, ?temp, ?con)	:-	
+	outCsP(?m, ?bStart, ?bEnd, ?temp, ?con).
+
+
+//Copy Propagation (Θεωρώντας ότι η miniJava δεν υποστηρίζει break ή κάποιο άλλο flow control που θα οδηγούσε σε πάνω από δύο predecessors ανά block.)
+//__________________________________________________________________________________________________________________________
+
+eitherDef(?m, ?i, ?to, ?from)	:-
+	varMove(?m, ?j, ?to, ?from),
+	varDef(?m, ?i, ?from).
+
+eitherDef(?m, ?i, ?to, ?from)	:-	
+	varMove(?m, ?j, ?to, ?from),
+	varDef(?m, ?i, ?to).
+
+killedInBV(?bm, ?bStart, ?bEnd, ?to, ?from)	:-
+	basicBlock(?bm, ?bStart, ?bEnd),
+	instruction(?bm, ?i, ?inst),
+	eitherDef(?bm, ?i, ?to, ?from),
+	varMove(?bm, ?j, ?to, ?from),
+	smORbg(?bm, ?j, ?bEnd, ?bStart),
+	?i >= ?bStart,
+	?i <= ?bEnd.
+
+genInBV(?m, ?bStart, ?bEnd, ?temp1, ?temp2)	:-	
+	basicBlock(?m, ?bStart, ?bEnd),
+	varMove(?m, ?i, ?temp1, ?temp2),
+	?i <= ?bEnd,
+	?i >= ?bStart,
+	!reAssignedV(?m, ?i, ?bEnd, ?temp1),
+	!reAssignedV(?m, ?i, ?bEnd, ?temp2).
+
+reAssignedV(?m, ?prevVarMove, ?bEnd, ?temp1)	:-	
+	basicBlock(?m, ?bStart, ?bEnd),
+	varMove(?m, ?prevVarMove, ?temp, ?temp2),
+	instruction(?m, ?j, ?inst1),
+	varDef(?m, ?j, ?temp1),
+	?j > ?prevVarMove,
+	?j <= ?bEnd.
+
+outCpP(?m, ?bStart, ?bEnd, ?temp1, ?temp2)	:-	
+	genInBV(?m, ?bStart, ?bEnd, ?temp1, ?temp2).
+
+outCpP(?m, ?bStart, ?bEnd, ?temp1, ?temp2)	:-	
+	inCpP(?m, ?bStart, ?bEnd, ?temp1, ?temp2),
+	!killedInBV(?m, ?bStart, ?bEnd, ?temp1, ?temp2).
+
+inCpP(?m, ?bStart, ?bEnd, ?temp1, ?temp2)	:-	
+	basicBlock(?m, ?bStart, ?bEnd),
+	next(?m, ?prev1, ?bStart),
+	otherPrec(?m, ?prev1, ?prev2, ?bStart),
+	dInCpP(?m, ?bStart, ?temp1, ?temp2).
+
+inCpP(?m, ?bStart, ?bEnd, ?temp1, ?temp2)	:-	
+	basicBlock(?m, ?bStart, ?bEnd),
+	next(?m, ?prev1, ?bStart),
+	!otherPrec(?m, ?prev1, ?prev2, ?bStart),
+	sInCpP(?m, ?bStart, ?temp1, ?temp2).
+
+dInCpP(?m, ?bStart, ?temp1, ?temp2)	:-	
+	next(?m, ?prev1, ?bStart),
+	instruction(?m, ?prev1, ?inst1),
+	basicBlock(?m, ?prevStart1, ?prev1),
+	outCpP(?m, ?prevStart1, ?prev1, ?temp1, ?temp2),
+	otherPrec(?m, ?prev1, ?prev2, ?bStart),
+	basicBlock(?m, ?prevStart2, ?prev2),
+	outCpP(?m, ?prevStart2, ?prev2, ?temp1, ?temp2).
+
+sInCpP(?m, ?bStart, ?temp1, ?temp2)	:-	
+	next(?m, ?prevEnd, ?bStart),
+	instruction(?m, ?prevEnd, ?inst),
+	basicBlock(?m, ?prevStart, ?prevEnd),
+	outCpP(?m, ?prevStart, ?prevEnd, ?temp1, ?temp2).
+
+copyPropagation(?m, ?bStart, ?bEnd, ?temp1, ?temp2)	:-	
+	outCpP(?m, ?bStart, ?bEnd, ?temp1, ?temp2).
